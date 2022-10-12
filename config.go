@@ -23,24 +23,32 @@ func (c Config) Runner() (*runner.CommandRunner, error) {
 	var commands []*runner.CommandStep
 	environ := getEnviron()
 	for _, cmd := range c.Commands {
-		var env []string
-		for _, e := range cmd.Env {
-			var buf bytes.Buffer
-			tmpl, err := template.New("").Parse(e)
+		var args []string
+		for _, arg := range cmd.Command {
+			argVar, err := resolveTmpl(arg, tmplData{
+				Env: environ,
+			})
 			if err != nil {
 				return nil, err
 			}
-			if err := tmpl.Execute(&buf, tmplData{
+
+			args = append(args, argVar)
+		}
+
+		var env []string
+		for _, e := range cmd.Env {
+			envVar, err := resolveTmpl(e, tmplData{
 				Env: environ,
-			}); err != nil {
+			})
+			if err != nil {
 				return nil, err
 			}
 
-			env = append(env, buf.String())
+			env = append(env, envVar)
 		}
 
 		commands = append(commands, &runner.CommandStep{
-			Command:    cmd.Command,
+			Command:    args,
 			Env:        env,
 			WorkingDir: cmd.WorkingDir,
 		})
@@ -49,6 +57,19 @@ func (c Config) Runner() (*runner.CommandRunner, error) {
 	return &runner.CommandRunner{
 		Steps: commands,
 	}, nil
+}
+
+func resolveTmpl(str string, data interface{}) (string, error) {
+	var buf bytes.Buffer
+	tmpl, err := template.New("").Parse(str)
+	if err != nil {
+		return "", err
+	}
+	if err := tmpl.Execute(&buf, data); err != nil {
+		return "", err
+	}
+
+	return buf.String(), nil
 }
 
 func getEnviron() map[string]string {

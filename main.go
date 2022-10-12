@@ -8,10 +8,12 @@ import (
 	"os"
 
 	"gopkg.in/yaml.v3"
+	"sigs.k8s.io/release-utils/version"
 )
 
 func main() {
 	configPath := flag.String("config", "slsabuild.yaml", "path to config file")
+	ver := flag.Bool("version", false, "print version info and exit")
 	flag.Usage = func() {
 		fmt.Fprintf(flag.CommandLine.Output(), "Usage: %s [FLAGS] -- [BUILD FLAGS]\n", os.Args[0])
 		flag.PrintDefaults()
@@ -20,6 +22,12 @@ func main() {
 	}
 
 	flag.Parse()
+
+	if *ver {
+		vInfo := version.GetVersionInfo()
+		fmt.Println((&vInfo).String())
+		return
+	}
 
 	// Read the config
 	cf, err := os.Open(*configPath)
