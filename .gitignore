@@ -16,3 +16,5 @@ vendor/
 
 # slsabuild binary.
 slsabuild
+# provenance files
+*.intoto.jsonl

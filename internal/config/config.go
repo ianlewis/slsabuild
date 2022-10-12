@@ -2,6 +2,7 @@ package config
 
 import (
 	"bytes"
+	"fmt"
 	"os"
 	"strings"
 	"text/template"
@@ -23,12 +24,18 @@ func ReadConfig(path string) (*Config, error) {
 	if err := d.Decode(&cfg); err != nil {
 		return nil, err
 	}
+
+	if len(cfg.Artifacts) == 0 {
+		return nil, fmt.Errorf("%s: at least one artifact should be defined", path)
+	}
+
 	return &cfg, nil
 }
 
 // Config defines the structure of the config file.
 type Config struct {
-	Commands []*runner.CommandStep
+	Artifacts []string
+	Commands  []*runner.CommandStep
 }
 
 type tmplData struct {
