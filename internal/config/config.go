@@ -1,4 +1,4 @@
-package main
+package config
 
 import (
 	"bytes"
@@ -7,7 +7,24 @@ import (
 	"text/template"
 
 	"github.com/ianlewis/slsabuild/internal/runner"
+	"gopkg.in/yaml.v2"
 )
+
+// ReadConfig reads the config from the given path.
+func ReadConfig(path string) (*Config, error) {
+	// Read the config
+	cf, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+
+	d := yaml.NewDecoder(cf)
+	var cfg Config
+	if err := d.Decode(&cfg); err != nil {
+		return nil, err
+	}
+	return &cfg, nil
+}
 
 // Config defines the structure of the config file.
 type Config struct {
@@ -19,7 +36,7 @@ type tmplData struct {
 }
 
 // Runner returns a command runner for the given config.
-func (c Config) Runner() (*runner.CommandRunner, error) {
+func (c *Config) Runner() (*runner.CommandRunner, error) {
 	var commands []*runner.CommandStep
 	environ := getEnviron()
 	for _, cmd := range c.Commands {

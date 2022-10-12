@@ -17,7 +17,6 @@ package runner
 import (
 	"context"
 	"errors"
-	"fmt"
 	"io"
 	"os"
 	"os/exec"
@@ -132,8 +131,6 @@ func (r *CommandRunner) runStep(ctx context.Context, step *CommandStep, dry bool
 	// Get the environment that will be used as currently configured. Environ
 	// is needed to capture the actual environment used.
 	env = cmd.Environ()
-
-	fmt.Println(cmd)
 
 	if !dry {
 		if err := cmd.Run(); err != nil {
