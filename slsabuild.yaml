@@ -1,0 +1,6 @@
+commands:
+  - command: ["go", "build", "."]
+    env:
+      - "HOME={{ .Env.HOME }}"
+      - "GOPATH={{ .Env.GOPATH }}"
+    # workingDir: "."
