@@ -53,7 +53,7 @@ func RunCmd(check func(error), f SigningFunc) *cobra.Command {
 				Keyless: true,
 			})
 
-			// TODO: Sign provenance. Need auth flow.
+			// Sign provenance. Need auth flow.
 			att, err := signer.Sign(ctx, p)
 			check(err)
 
@@ -67,13 +67,8 @@ func RunCmd(check func(error), f SigningFunc) *cobra.Command {
 				}
 			}
 
-			// TODO: write signed attestation.
+			// Write signed attestation.
 			check(os.WriteFile(attPath, att.Bytes(), 0600))
-			// fp, err := os.OpenFile(filepath.Clean(attPath), os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0o600)
-			// check(err)
-			// defer fp.Close()
-			// e := json.NewEncoder(fp)
-			// check(e.Encode(p))
 		},
 	}
 
