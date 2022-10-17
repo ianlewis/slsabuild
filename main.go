@@ -5,12 +5,13 @@ import (
 	"fmt"
 	"os"
 
-	_ "github.com/sigstore/cosign/pkg/providers/all"
+	// _ "github.com/sigstore/cosign/pkg/providers/all"
 	"github.com/slsa-framework/slsa-github-generator/signing"
 	"github.com/slsa-framework/slsa-github-generator/signing/sigstore"
 	"github.com/spf13/cobra"
 
 	"github.com/ianlewis/slsabuild/internal/cmd"
+	ssigstore "github.com/ianlewis/slsabuild/internal/signing/sigstore"
 )
 
 func checkExit(err error) {
@@ -21,7 +22,7 @@ func checkExit(err error) {
 }
 
 func defaultSigningFunc(opts cmd.SigningOpts) (signing.Signer, signing.TransparencyLog, error) {
-	return sigstore.NewDefaultFulcio(), sigstore.NewDefaultRekor(), nil
+	return ssigstore.NewDefaultFulcio(), sigstore.NewDefaultRekor(), nil
 }
 
 func rootCmd() *cobra.Command {

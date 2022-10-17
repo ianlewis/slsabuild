@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -50,16 +49,16 @@ func RunCmd(check func(error), f SigningFunc) *cobra.Command {
 
 			// Sign SLSA provenance.
 			// TODO: Support local keys.
-			// signer, tlog, err := f(SigningOpts{
-			// 	Keyless: true,
-			// })
+			signer, tlog, err := f(SigningOpts{
+				Keyless: true,
+			})
 
 			// TODO: Sign provenance. Need auth flow.
-			// att, err := signer.Sign(ctx, p)
-			// check(err)
+			att, err := signer.Sign(ctx, p)
+			check(err)
 
-			// _, err = tlog.Upload(ctx, att)
-			// check(err)
+			_, err = tlog.Upload(ctx, att)
+			check(err)
 
 			if attPath == "" {
 				attPath = "multiple.intoto.jsonl"
@@ -69,12 +68,12 @@ func RunCmd(check func(error), f SigningFunc) *cobra.Command {
 			}
 
 			// TODO: write signed attestation.
-			// check(os.WriteFile(attPath, att.Bytes(), 0600))
-			fp, err := os.OpenFile(filepath.Clean(attPath), os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0o600)
-			check(err)
-			defer fp.Close()
-			e := json.NewEncoder(fp)
-			check(e.Encode(p))
+			check(os.WriteFile(attPath, att.Bytes(), 0600))
+			// fp, err := os.OpenFile(filepath.Clean(attPath), os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0o600)
+			// check(err)
+			// defer fp.Close()
+			// e := json.NewEncoder(fp)
+			// check(e.Encode(p))
 		},
 	}
 
